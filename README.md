@@ -1,6 +1,6 @@
 # Chess CLI - command line chess game
 
-> Multiplayer chess game played using command line interface with dedicated server.
+> Multiplayer chess game played using a command line interface with a dedicated server.
 
 ## Configuration
 
