@@ -1,0 +1,731 @@
+definitions:
+  model.AccessToken:
+    properties:
+      token:
+        type: string
+    type: object
+  model.ErrorResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  model.Event:
+    properties:
+      data:
+        $ref: '#/definitions/model.EventData'
+      timestamp:
+        type: string
+      type:
+        type: string
+    type: object
+  model.EventData:
+    properties:
+      gameId:
+        type: integer
+      payload:
+        type: string
+      playerId:
+        type: integer
+    type: object
+  model.Game:
+    properties:
+      blackPlayerId:
+        type: integer
+      createdAt:
+        type: string
+      creatorId:
+        type: integer
+      endedAt:
+        type: string
+      id:
+        type: integer
+      inProgress:
+        type: boolean
+      lastMovePlayedAt:
+        type: string
+      name:
+        type: string
+      public:
+        type: boolean
+      startedAt:
+        type: string
+      tiles:
+        type: string
+      turnDurationSeconds:
+        type: integer
+      whitePlayerId:
+        type: integer
+      winnerId:
+        type: integer
+    type: object
+  model.GameCreate:
+    properties:
+      isWhite:
+        type: boolean
+      name:
+        type: string
+      password:
+        type: string
+      turnDurationSeconds:
+        type: integer
+    type: object
+  model.GameJoin:
+    properties:
+      password:
+        type: string
+    type: object
+  model.GameListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/model.Game'
+        type: array
+      resultCount:
+        type: integer
+      totalCount:
+        type: integer
+    type: object
+  model.GameMakeMove:
+    properties:
+      move:
+        type: string
+    type: object
+  model.GenericResponse:
+    properties:
+      data:
+        type: string
+      success:
+        type: boolean
+    type: object
+  model.Player:
+    properties:
+      createdAt:
+        type: string
+      draws:
+        type: integer
+      elo:
+        type: integer
+      id:
+        type: integer
+      isPlaying:
+        type: boolean
+      lastPlayedAt:
+        type: string
+      losses:
+        type: integer
+      rate:
+        type: number
+      username:
+        type: string
+      wins:
+        type: integer
+    type: object
+  model.PlayerListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/model.Player'
+        type: array
+      resultCount:
+        type: integer
+      totalCount:
+        type: integer
+    type: object
+  model.PlayerRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact:
+    email: lukamatosevic5@gmail.com
+    name: Luka Matošević
+    url: https://lukamatosevic.com
+  license:
+    name: MIT 2023
+    url: https://www.mit.edu/~amini/LICENSE.md
+paths:
+  /v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login registered player
+      parameters:
+      - description: Login player
+        in: body
+        name: player
+        required: true
+        schema:
+          $ref: '#/definitions/model.PlayerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/model.AccessToken'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Login registered player
+      tags:
+      - auth
+  /v1/auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Logout authorized player
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/model.GenericResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Logout authorized player
+      tags:
+      - auth
+  /v1/auth/player:
+    get:
+      consumes:
+      - application/json
+      description: Get authorized player
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/model.Player'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get authorized player
+      tags:
+      - auth
+  /v1/events/subscribe:
+    get:
+      consumes:
+      - application/json
+      description: Subscribe to server sent events
+      parameters:
+      - description: Access token
+        in: query
+        name: token
+        required: true
+        type: string
+      - description: Event type
+        enum:
+        - GameAnyEvent
+        - GameMoveEvent
+        - GameJoinEvent
+        - GameQuitEvent
+        - GameStartEvent
+        - GameEndEvent
+        - GameWhitePlayerMoveEvent
+        - GameWhitePlayerMoveEvent
+        in: query
+        name: event
+        required: true
+        type: string
+      - description: Game ID
+        in: query
+        name: gameId
+        type: integer
+      produces:
+      - text/event-stream
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/model.Event'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Subscribe to server sent events
+      tags:
+      - events
+  /v1/games:
+    get:
+      description: Query and list games
+      parameters:
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: size
+        type: integer
+      - description: Sort
+        in: query
+        name: sort
+        type: string
+      - description: Filter
+        in: query
+        name: filter
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/model.GameListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Query and list games
+      tags:
+      - games
+  /v1/games/{id}:
+    get:
+      description: Find one game
+      parameters:
+      - description: Game ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/model.Game'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Find one game
+      tags:
+      - games
+  /v1/games/{id}/join:
+    post:
+      consumes:
+      - application/json
+      description: Join existing game
+      parameters:
+      - description: Game ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Join game
+        in: body
+        name: game
+        schema:
+          $ref: '#/definitions/model.GameJoin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/model.GenericResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Join existing game
+      tags:
+      - games
+  /v1/games/{id}/move:
+    post:
+      consumes:
+      - application/json
+      description: Make game move
+      parameters:
+      - description: Game ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Game move
+        in: body
+        name: game
+        required: true
+        schema:
+          $ref: '#/definitions/model.GameMakeMove'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/model.GenericResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Make game move
+      tags:
+      - games
+  /v1/games/{id}/moves:
+    get:
+      description: Query and list game moves
+      parameters:
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: size
+        type: integer
+      - description: Sort
+        in: query
+        name: sort
+        type: string
+      - description: Filter
+        in: query
+        name: filter
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/model.GameListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Query and list game moves
+      tags:
+      - games
+  /v1/games/{id}/quit:
+    post:
+      consumes:
+      - application/json
+      description: Quit joined game
+      parameters:
+      - description: Game ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/model.GenericResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Quit joined game
+      tags:
+      - games
+  /v1/games/create:
+    post:
+      consumes:
+      - application/json
+      description: Create new game
+      parameters:
+      - description: Create game
+        in: body
+        name: game
+        required: true
+        schema:
+          $ref: '#/definitions/model.GameCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/model.Game'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create new game
+      tags:
+      - games
+  /v1/players:
+    get:
+      description: Query and list players
+      parameters:
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: size
+        type: integer
+      - description: Sort
+        in: query
+        name: sort
+        type: string
+      - description: Filter
+        in: query
+        name: filter
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/model.PlayerListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Query and list players
+      tags:
+      - players
+  /v1/players/{id}:
+    get:
+      description: Find one player
+      parameters:
+      - description: Player ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/model.Player'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Find one player
+      tags:
+      - players
+  /v1/players/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Delete player account
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/model.GenericResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete player account
+      tags:
+      - players
+  /v1/players/register:
+    post:
+      consumes:
+      - application/json
+      description: Register new player
+      parameters:
+      - description: Register player
+        in: body
+        name: player
+        required: true
+        schema:
+          $ref: '#/definitions/model.PlayerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/model.Player'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Register new player
+      tags:
+      - players
+  /v1/players/update:
+    put:
+      consumes:
+      - application/json
+      description: Update player account
+      parameters:
+      - description: Update player data
+        in: body
+        name: player
+        required: true
+        schema:
+          $ref: '#/definitions/model.PlayerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/model.GenericResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update player account
+      tags:
+      - players
+securityDefinitions:
+  ApiKeyAuth:
+    description: The access token obtained from /login endpoint, required for accessing
+      protected routes
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

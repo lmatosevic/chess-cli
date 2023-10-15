@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  postgresql:
+    image: postgres:14
+    restart: always
+    container_name: chess-postgresql
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: "chess_cli"
+      POSTGRES_USER: "chess-cli"
+      POSTGRES_PASSWORD: "Password123!"
+
+  chess-server:
+    image: lukamatosevic/chess-server:latest
+    container_name: chess-server
+    restart: unless-stopped
+    build:
+      context: ./
+    depends_on:
+      - postgresql
+    ports:
+      - "64355:64355"
+    environment:
+      SERVER_HOST: "0.0.0.0"
+      DATABASE_HOST: "chess-postgresql"
+      DATABASE_PASSWORD: "Password123!"
+
+volumes:
+  postgresql-data:

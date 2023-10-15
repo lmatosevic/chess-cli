@@ -1,0 +1,26 @@
+general:
+  appName: "Chess CLI"
+  author: "Luka Matošević"
+  description: "The multiplayer chess game"
+
+server:
+  hostname: "http://localhost:64355"
+  host: "localhost"
+  port: 64355
+  debug: false
+
+database:
+  host: "localhost"
+  port: 5432
+  name: "chess_cli"
+  schema: "public"
+  username: "chess-cli"
+  password: ""
+  migrationsDir: "./migrations"
+  autoMigrate: true
+
+rules:
+  defaultTurnDurationSeconds: 900
+  drawRequestTimeoutTurns: 6
+  maxCreatedGames: 10
+  maxJoinedGames: 20
