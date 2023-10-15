@@ -160,3 +160,7 @@ COMMANDS:
 OPTIONS:
    --help, -h  show help
 ```
+
+## License
+
+Chess-CLI is [MIT licensed](LICENSE).
