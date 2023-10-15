@@ -60,7 +60,7 @@ docker run --env "DATABASE_HOST=127.0.0.1" \
            --env "DATABASE_PASSWORD=..." chess-server
 ```
 
-## CMD
+## Commands
 
 ### Chess Server
 
