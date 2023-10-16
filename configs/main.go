@@ -2,7 +2,7 @@ package configs
 
 import (
 	"fmt"
-	"gitlab.com/lmatosevic/chess-cli/pkg/utils"
+	"github.com/lmatosevic/chess-cli/pkg/utils"
 	"gopkg.in/yaml.v3"
 	"log"
 	"os"

@@ -3,8 +3,8 @@ package repository
 import (
 	"database/sql"
 	"fmt"
-	"gitlab.com/lmatosevic/chess-cli/pkg/database"
-	"gitlab.com/lmatosevic/chess-cli/pkg/utils"
+	"github.com/lmatosevic/chess-cli/pkg/database"
+	"github.com/lmatosevic/chess-cli/pkg/utils"
 	"time"
 )
 

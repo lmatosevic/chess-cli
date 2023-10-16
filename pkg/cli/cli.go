@@ -3,9 +3,9 @@ package cli
 import (
 	"errors"
 	"fmt"
+	"github.com/lmatosevic/chess-cli/pkg/cli/command"
+	"github.com/lmatosevic/chess-cli/pkg/model"
 	"github.com/urfave/cli/v2"
-	"gitlab.com/lmatosevic/chess-cli/pkg/cli/command"
-	"gitlab.com/lmatosevic/chess-cli/pkg/model"
 	"os"
 	"strings"
 )
@@ -20,7 +20,7 @@ func Run() {
 	app := &cli.App{
 		Name:    "Chess CLI",
 		Usage:   "Play a game of chess using command line interface",
-		Version: "1.0.0",
+		Version: "1.0.1",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:        "server",
@@ -85,9 +85,9 @@ func Run() {
 				},
 			},
 			{
-				Name:     "register",
-				Aliases:  []string{"r"},
-				Category: "auth",
+				Name:    "register",
+				Aliases: []string{"r"},
+				Usage:   "register new player account",
 				Action: func(cCtx *cli.Context) error {
 					if err := StaticServerOnlyInput(server, stateless); err != nil {
 						return err
@@ -103,9 +103,9 @@ func Run() {
 				},
 			},
 			{
-				Name:     "login",
-				Aliases:  []string{"l"},
-				Category: "auth",
+				Name:    "login",
+				Aliases: []string{"l"},
+				Usage:   "login into your account",
 				Action: func(cCtx *cli.Context) error {
 					if err := StaticServerOnlyInput(server, stateless); err != nil {
 						return err
@@ -121,9 +121,9 @@ func Run() {
 				},
 			},
 			{
-				Name:     "logout",
-				Aliases:  []string{"o"},
-				Category: "auth",
+				Name:    "logout",
+				Aliases: []string{"o"},
+				Usage:   "logout from the server",
 				Action: func(cCtx *cli.Context) error {
 					if err := StaticInputs(server, username, password, token, stateless); err != nil {
 						return err
@@ -139,9 +139,9 @@ func Run() {
 				},
 			},
 			{
-				Name:     "changePassword",
-				Aliases:  []string{"c"},
-				Category: "auth",
+				Name:    "changePassword",
+				Aliases: []string{"c"},
+				Usage:   "change your account's password",
 				Flags: []cli.Flag{
 					&cli.StringFlag{Name: "newPassword", Required: true},
 				},
@@ -160,9 +160,9 @@ func Run() {
 				},
 			},
 			{
-				Name:     "whoami",
-				Aliases:  []string{"w"},
-				Category: "auth",
+				Name:    "whoami",
+				Aliases: []string{"w"},
+				Usage:   "show your account information",
 				Action: func(cCtx *cli.Context) error {
 					if err := StaticInputs(server, username, password, token, stateless); err != nil {
 						return err
@@ -180,6 +180,7 @@ func Run() {
 			{
 				Name:    "events",
 				Aliases: []string{"e"},
+				Usage:   "subscribe to server sent events and show them in real-time",
 				Flags: []cli.Flag{
 					&cli.StringSliceFlag{Name: "type", Required: true},
 					&cli.Int64Flag{Name: "gameId"},

@@ -1,4 +1,4 @@
-module gitlab.com/lmatosevic/chess-cli
+module github.com/lmatosevic/chess-cli
 
 go 1.21.0
 

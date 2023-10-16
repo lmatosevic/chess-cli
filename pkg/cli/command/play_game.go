@@ -3,8 +3,8 @@ package command
 import (
 	"errors"
 	"fmt"
-	"gitlab.com/lmatosevic/chess-cli/pkg/client"
-	"gitlab.com/lmatosevic/chess-cli/pkg/model"
+	"github.com/lmatosevic/chess-cli/pkg/client"
+	"github.com/lmatosevic/chess-cli/pkg/model"
 )
 
 func PlayGame(gameId int64, move string) (*model.GenericResponse, error) {

@@ -3,9 +3,9 @@ package cli
 import (
 	"errors"
 	"fmt"
-	"gitlab.com/lmatosevic/chess-cli/pkg/cli/command"
-	"gitlab.com/lmatosevic/chess-cli/pkg/client"
-	"gitlab.com/lmatosevic/chess-cli/pkg/utils"
+	"github.com/lmatosevic/chess-cli/pkg/cli/command"
+	"github.com/lmatosevic/chess-cli/pkg/client"
+	"github.com/lmatosevic/chess-cli/pkg/utils"
 	"os"
 	"slices"
 	"strings"

@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"gitlab.com/lmatosevic/chess-cli/pkg/database"
-	"gitlab.com/lmatosevic/chess-cli/pkg/utils"
+	"github.com/lmatosevic/chess-cli/pkg/database"
+	"github.com/lmatosevic/chess-cli/pkg/utils"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )

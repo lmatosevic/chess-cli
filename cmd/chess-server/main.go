@@ -1,9 +1,9 @@
 package main
 
 import (
-	"gitlab.com/lmatosevic/chess-cli/pkg/database"
-	"gitlab.com/lmatosevic/chess-cli/pkg/server"
-	"gitlab.com/lmatosevic/chess-cli/pkg/server/scheduler"
+	"github.com/lmatosevic/chess-cli/pkg/database"
+	"github.com/lmatosevic/chess-cli/pkg/server"
+	"github.com/lmatosevic/chess-cli/pkg/server/scheduler"
 )
 
 //	@contact.name	Luka Matošević

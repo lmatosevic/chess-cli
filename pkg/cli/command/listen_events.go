@@ -2,9 +2,9 @@ package command
 
 import (
 	"errors"
-	"gitlab.com/lmatosevic/chess-cli/pkg/client"
-	"gitlab.com/lmatosevic/chess-cli/pkg/model"
-	"gitlab.com/lmatosevic/chess-cli/pkg/server/handler"
+	"github.com/lmatosevic/chess-cli/pkg/client"
+	"github.com/lmatosevic/chess-cli/pkg/model"
+	"github.com/lmatosevic/chess-cli/pkg/server/handler"
 	"sync"
 )
 

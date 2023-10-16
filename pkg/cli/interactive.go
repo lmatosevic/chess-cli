@@ -2,11 +2,11 @@ package cli
 
 import (
 	"fmt"
-	"gitlab.com/lmatosevic/chess-cli/pkg/cli/command"
-	"gitlab.com/lmatosevic/chess-cli/pkg/game"
-	"gitlab.com/lmatosevic/chess-cli/pkg/model"
-	"gitlab.com/lmatosevic/chess-cli/pkg/server/handler"
-	"gitlab.com/lmatosevic/chess-cli/pkg/utils"
+	"github.com/lmatosevic/chess-cli/pkg/cli/command"
+	"github.com/lmatosevic/chess-cli/pkg/game"
+	"github.com/lmatosevic/chess-cli/pkg/model"
+	"github.com/lmatosevic/chess-cli/pkg/server/handler"
+	"github.com/lmatosevic/chess-cli/pkg/utils"
 	"os"
 	"os/signal"
 	"slices"

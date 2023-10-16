@@ -93,22 +93,21 @@ USAGE:
    Chess CLI [global options] command [command options] [arguments...]
 
 VERSION:
-   1.0.0
+   1.0.1
 
 COMMANDS:
-   info, i    show server info
-   events, e
-   help, h    Shows a list of commands or help for one command
-   auth:
-     register, r
-     login, l
-     logout, o
-     changePassword, c
-     whoami, w
+   info, i            show server info
+   register, r        register new player account
+   login, l           login into your account
+   logout, o          logout from the server
+   changePassword, c  change your account's password
+   whoami, w          show your account information
+   events, e          subscribe to server sent events and show them in real-time
+   help, h            Shows a list of commands or help for one command
    games:
-     game, g, games
+     game, g, games  
    players:
-     player, p, players
+     player, p, players  
 
 GLOBAL OPTIONS:
    --server value, -s value    chess server base URL

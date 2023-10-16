@@ -2,8 +2,8 @@ package scheduler
 
 import (
 	"fmt"
-	"gitlab.com/lmatosevic/chess-cli/pkg/database/repository"
-	"gitlab.com/lmatosevic/chess-cli/pkg/server/handler"
+	"github.com/lmatosevic/chess-cli/pkg/database/repository"
+	"github.com/lmatosevic/chess-cli/pkg/server/handler"
 	"log"
 )
 

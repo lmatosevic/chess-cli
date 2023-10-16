@@ -3,9 +3,9 @@ package cli
 import (
 	"fmt"
 	"github.com/jedib0t/go-pretty/v6/table"
-	"gitlab.com/lmatosevic/chess-cli/pkg/game"
-	"gitlab.com/lmatosevic/chess-cli/pkg/model"
-	"gitlab.com/lmatosevic/chess-cli/pkg/utils"
+	"github.com/lmatosevic/chess-cli/pkg/game"
+	"github.com/lmatosevic/chess-cli/pkg/model"
+	"github.com/lmatosevic/chess-cli/pkg/utils"
 )
 
 func ShowServerInfo(status *model.Status) {

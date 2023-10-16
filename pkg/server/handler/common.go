@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"gitlab.com/lmatosevic/chess-cli/pkg/database/repository"
+	"github.com/lmatosevic/chess-cli/pkg/database/repository"
 	"strconv"
 	"strings"
 )

@@ -2,8 +2,8 @@ package command
 
 import (
 	"errors"
-	"gitlab.com/lmatosevic/chess-cli/pkg/client"
-	"gitlab.com/lmatosevic/chess-cli/pkg/model"
+	"github.com/lmatosevic/chess-cli/pkg/client"
+	"github.com/lmatosevic/chess-cli/pkg/model"
 )
 
 func ListPlayers(page int, size int, sort string, filter string) (*model.PlayerListResponse, error) {

@@ -3,8 +3,8 @@ package command
 import (
 	"errors"
 	"fmt"
-	"gitlab.com/lmatosevic/chess-cli/pkg/client"
-	"gitlab.com/lmatosevic/chess-cli/pkg/model"
+	"github.com/lmatosevic/chess-cli/pkg/client"
+	"github.com/lmatosevic/chess-cli/pkg/model"
 )
 
 func QuitGame(gameId int64) (*model.GenericResponse, error) {

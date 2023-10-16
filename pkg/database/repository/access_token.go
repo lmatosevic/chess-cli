@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/google/uuid"
-	"gitlab.com/lmatosevic/chess-cli/pkg/database"
+	"github.com/lmatosevic/chess-cli/pkg/database"
 	"time"
 )
 

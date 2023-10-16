@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/lmatosevic/chess-cli/configs"
+	"github.com/lmatosevic/chess-cli/docs"
+	"github.com/lmatosevic/chess-cli/pkg/model"
+	"github.com/lmatosevic/chess-cli/pkg/server/handler"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"gitlab.com/lmatosevic/chess-cli/configs"
-	"gitlab.com/lmatosevic/chess-cli/docs"
-	"gitlab.com/lmatosevic/chess-cli/pkg/model"
-	"gitlab.com/lmatosevic/chess-cli/pkg/server/handler"
 	"log"
 	"net/http"
 	"strconv"
@@ -19,7 +19,7 @@ import (
 func Run() {
 	conf := *configs.GetConfig()
 
-	version := "1.0.0"
+	version := "1.0.1"
 
 	docs.SwaggerInfo.Title = conf.General.AppName
 	docs.SwaggerInfo.Description = conf.General.Description

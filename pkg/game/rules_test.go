@@ -1,7 +1,7 @@
 package game
 
 import (
-	"gitlab.com/lmatosevic/chess-cli/pkg/utils"
+	"github.com/lmatosevic/chess-cli/pkg/utils"
 	"testing"
 )
 

@@ -2,9 +2,9 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"gitlab.com/lmatosevic/chess-cli/pkg/database/repository"
-	"gitlab.com/lmatosevic/chess-cli/pkg/model"
-	"gitlab.com/lmatosevic/chess-cli/pkg/utils"
+	"github.com/lmatosevic/chess-cli/pkg/database/repository"
+	"github.com/lmatosevic/chess-cli/pkg/model"
+	"github.com/lmatosevic/chess-cli/pkg/utils"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"strings"
