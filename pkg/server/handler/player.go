@@ -205,5 +205,5 @@ func DeletePlayer(c *gin.Context) {
 
 func makePlayerDTO(p *repository.Player) model.Player {
 	return model.Player{Id: p.Id, Username: p.Username, Wins: p.Wins, Losses: p.Losses, Draws: p.Draws, Rate: p.Rate,
-		Elo: p.Elo, IsPlaying: p.IsPlaying(), LastPlayedAt: p.FormatLastPlayedAt(), CreatedAt: p.FormatCreatedAt()}
+		Elo: p.Elo, IsPlaying: p.IsPlaying, LastPlayedAt: p.FormatLastPlayedAt(), CreatedAt: p.FormatCreatedAt()}
 }

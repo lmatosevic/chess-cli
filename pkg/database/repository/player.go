@@ -20,6 +20,7 @@ type Player struct {
 	Rate         float32
 	Elo          int32
 	LastPlayedAt sql.NullTime
+	IsPlaying    bool
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
@@ -40,12 +41,12 @@ func (p *Player) FormatUpdatedAt() string {
 	return utils.ISODate(p.UpdatedAt)
 }
 
-func (p *Player) IsPlaying() bool {
+func (p *Player) RefreshIsPlaying() {
 	gameCount, _ := CountGames(fmt.Sprintf("whitePlayerId=%d;and;inProgress=true;or;blackPlayerId=%d;and;inProgress=true", p.Id, p.Id))
 	if gameCount > 0 {
-		return true
+		p.IsPlaying = true
 	} else {
-		return false
+		p.IsPlaying = false
 	}
 }
 
@@ -162,10 +163,11 @@ func CreatePlayer(username string, password string) (*Player, error) {
 }
 
 func UpdatePlayer(player *Player) error {
-	res, err := database.GetConnection().Exec(`UPDATE player SET "username" = $2, "passwordHash" = $3, "wins" = $4, 
-                  "losses" = $5, "draws" = $6, "rate" = $7, "elo" = $8, "lastPlayedAt" = $9, "updatedAt" = $10 WHERE id = $1`,
-		player.Id, player.Username, player.PasswordHash, player.Wins, player.Losses, player.Draws, player.Rate,
-		player.Elo, SqlDateFormat(player.LastPlayedAt), utils.ISODateNow())
+	res, err := database.GetConnection().Exec(`UPDATE player SET "passwordHash" = $2, "wins" = $3, "losses" = $4, 
+                  "draws" = $5, "rate" = $6, "elo" = $7, "lastPlayedAt" = $8, "isPlaying" = $9, "updatedAt" = $10 
+              WHERE id = $1`,
+		player.Id, player.PasswordHash, player.Wins, player.Losses, player.Draws, player.Rate, player.Elo,
+		SqlDateFormat(player.LastPlayedAt), player.IsPlaying, utils.ISODateNow())
 	affected, _ := res.RowsAffected()
 	if affected == 0 {
 		return errors.New("player does not exist")
@@ -184,5 +186,5 @@ func DeletePlayer(id int64) error {
 
 func scanPlayerRows(rows *sql.Rows, p *Player) error {
 	return rows.Scan(&p.Id, &p.Username, &p.PasswordHash, &p.Wins, &p.Losses, &p.Draws, &p.Rate, &p.Elo,
-		&p.LastPlayedAt, &p.CreatedAt, &p.UpdatedAt)
+		&p.LastPlayedAt, &p.CreatedAt, &p.UpdatedAt, &p.IsPlaying)
 }

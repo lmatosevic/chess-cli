@@ -16,7 +16,9 @@ type Game struct {
 	PasswordHash        sql.NullString
 	TurnDurationSeconds sql.NullInt32
 	WhitePlayerId       sql.NullInt64
+	WhitePlayerUsername sql.NullString
 	BlackPlayerId       sql.NullInt64
+	BlackPlayerUsername sql.NullString
 	CreatorId           sql.NullInt64
 	WinnerId            sql.NullInt64
 	Tiles               string
@@ -127,7 +129,7 @@ func CountGames(filter string) (int, error) {
 	return totalCount, nil
 }
 
-func CreateGame(name string, password string, turnDurationSeconds int32, creatorId int64, white bool, tiles string) (*Game, error) {
+func CreateGame(name string, password string, turnDurationSeconds int32, creator *Player, white bool, tiles string) (*Game, error) {
 	var passwordHash sql.NullString
 	if password != "" {
 		hash, err := bcrypt.GenerateFromPassword([]byte(password), 6)
@@ -138,11 +140,15 @@ func CreateGame(name string, password string, turnDurationSeconds int32, creator
 	}
 
 	blackPlayerId := sql.NullInt64{}
+	blackPlayerUsername := sql.NullString{}
 	whitePlayerId := sql.NullInt64{}
+	whitePlayerUsername := sql.NullString{}
 	if white {
-		whitePlayerId = sql.NullInt64{Int64: creatorId, Valid: true}
+		whitePlayerId = sql.NullInt64{Int64: creator.Id, Valid: true}
+		whitePlayerUsername = sql.NullString{String: creator.Username, Valid: true}
 	} else {
-		blackPlayerId = sql.NullInt64{Int64: creatorId, Valid: true}
+		blackPlayerId = sql.NullInt64{Int64: creator.Id, Valid: true}
+		blackPlayerUsername = sql.NullString{String: creator.Username, Valid: true}
 	}
 
 	turnDuration := sql.NullInt32{}
@@ -151,8 +157,10 @@ func CreateGame(name string, password string, turnDurationSeconds int32, creator
 	}
 
 	row := database.GetConnection().QueryRow(
-		`INSERT INTO game ("name", "passwordHash", "turnDurationSeconds", "tiles", "whitePlayerId", "blackPlayerId", "creatorId") VALUES 
-    	 ($1, $2, $3, $4, $5, $6, $7) RETURNING id`, name, passwordHash, turnDuration, tiles, whitePlayerId, blackPlayerId, creatorId)
+		`INSERT INTO game ("name", "passwordHash", "turnDurationSeconds", "tiles", "whitePlayerId", "whitePlayerUsername", 
+                  "blackPlayerId", "blackPlayerUsername", "creatorId") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+        RETURNING id`, name, passwordHash, turnDuration, tiles, whitePlayerId, whitePlayerUsername, blackPlayerId,
+		blackPlayerUsername, creator.Id)
 
 	var id int64
 	err := row.Scan(&id)
@@ -165,11 +173,12 @@ func CreateGame(name string, password string, turnDurationSeconds int32, creator
 
 func UpdateGame(game *Game) error {
 	res, err := database.GetConnection().Exec(`UPDATE game SET "name" = $2, "passwordHash" = $3, "turnDurationSeconds" = $4, 
-                "whitePlayerId" = $5, "blackPlayerId" = $6, "creatorId" = $7, "winnerId" = $8, "tiles" = $9, 
-                "inProgress" = $10, "lastMovePlayedAt" = $11, "startedAt" = $12, "endedAt" = $13, "updatedAt" = $14 WHERE id = $1`,
-		game.Id, game.Name, game.PasswordHash, game.TurnDurationSeconds, game.WhitePlayerId, game.BlackPlayerId, game.CreatorId,
-		game.WinnerId, game.Tiles, game.InProgress, SqlDateFormat(game.LastMovePlayedAt), SqlDateFormat(game.StartedAt),
-		SqlDateFormat(game.EndedAt), utils.ISODateNow())
+                "whitePlayerId" = $5, "whitePlayerUsername" = $6, "blackPlayerId" = $7, "blackPlayerUsername" = $8, "creatorId" = $9, 
+                "winnerId" = $10, "tiles" = $11, "inProgress" = $12, "lastMovePlayedAt" = $13, "startedAt" = $14, "endedAt" = $15, 
+                "updatedAt" = $16 WHERE id = $1`,
+		game.Id, game.Name, game.PasswordHash, game.TurnDurationSeconds, game.WhitePlayerId, game.WhitePlayerUsername,
+		game.BlackPlayerId, game.BlackPlayerUsername, game.CreatorId, game.WinnerId, game.Tiles, game.InProgress,
+		SqlDateFormat(game.LastMovePlayedAt), SqlDateFormat(game.StartedAt), SqlDateFormat(game.EndedAt), utils.ISODateNow())
 	affected, _ := res.RowsAffected()
 	if affected == 0 {
 		return errors.New("game does not exist")
@@ -216,5 +225,5 @@ func FindInactiveGames() (*[]Game, error) {
 func scanGameRows(rows *sql.Rows, g *Game) error {
 	return rows.Scan(&g.Id, &g.Name, &g.PasswordHash, &g.TurnDurationSeconds, &g.WhitePlayerId, &g.BlackPlayerId,
 		&g.CreatorId, &g.WinnerId, &g.Tiles, &g.InProgress, &g.LastMovePlayedAt, &g.StartedAt, &g.EndedAt, &g.CreatedAt,
-		&g.UpdatedAt)
+		&g.UpdatedAt, &g.WhitePlayerUsername, &g.BlackPlayerUsername)
 }

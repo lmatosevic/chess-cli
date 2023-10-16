@@ -6,7 +6,9 @@ type Game struct {
 	TurnDurationSeconds int32  `json:"turnDurationSeconds"`
 	Public              bool   `json:"public"`
 	WhitePlayerId       int64  `json:"whitePlayerId"`
+	WhitePlayerUsername string `json:"whitePlayerUsername"`
 	BlackPlayerId       int64  `json:"blackPlayerId"`
+	BlackPlayerUsername string `json:"blackPlayerUsername"`
 	WinnerId            int64  `json:"winnerId"`
 	CreatorId           int64  `json:"creatorId"`
 	InProgress          bool   `json:"inProgress"`

@@ -142,7 +142,7 @@ func CreateGame(c *gin.Context) {
 		turnDuration = conf.Rules.DefaultTurnDurationSeconds
 	}
 
-	g, err := repository.CreateGame(gc.Name, gc.Password, turnDuration, player.Id, gc.IsWhite,
+	g, err := repository.CreateGame(gc.Name, gc.Password, turnDuration, player, gc.IsWhite,
 		game.MakeStartingBoard())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Success: false, Error: err.Error()})
@@ -225,15 +225,44 @@ func JoinGame(c *gin.Context) {
 
 	var side string
 	playerId := sql.NullInt64{Int64: player.Id, Valid: true}
+	playerUsername := sql.NullString{String: player.Username, Valid: true}
 	if g.WhitePlayerId.Int64 != 0 {
 		g.BlackPlayerId = playerId
+		g.BlackPlayerUsername = playerUsername
 		side = "black"
 	} else {
 		g.WhitePlayerId = playerId
+		g.WhitePlayerUsername = playerUsername
 		side = "white"
 	}
 
 	err = repository.UpdateGame(g)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Success: false, Error: err.Error()})
+		return
+	}
+
+	player.RefreshIsPlaying()
+	err = repository.UpdatePlayer(player)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Success: false, Error: err.Error()})
+		return
+	}
+
+	opponentId := g.WhitePlayerId.Int64
+	if player.Id == g.WhitePlayerId.Int64 {
+		opponentId = g.BlackPlayerId.Int64
+	}
+
+	opponentPlayer, err := repository.FindPlayerById(opponentId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Success: false, Error: err.Error()})
+		return
+	}
+
+	opponentPlayer.RefreshIsPlaying()
+	err = repository.UpdatePlayer(opponentPlayer)
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Success: false, Error: err.Error()})
 		return
@@ -512,6 +541,18 @@ func UpdateEndGameState(game *repository.Game, winner *repository.Player, loser 
 	winnerElo := winner.Elo
 	loserElo := loser.Elo
 
+	// Update game data
+	if !isDraw {
+		game.WinnerId = sql.NullInt64{Int64: winner.Id, Valid: true}
+	}
+	game.EndedAt = sql.NullTime{Time: time.Now().UTC(), Valid: true}
+	game.InProgress = false
+
+	err := repository.UpdateGame(game)
+	if err != nil {
+		return err
+	}
+
 	if !isDraw {
 		// Update winner player data
 		winner.Wins = winner.Wins + 1
@@ -522,7 +563,9 @@ func UpdateEndGameState(game *repository.Game, winner *repository.Player, loser 
 		winner.Elo = calculateElo(winnerElo, loserElo, false, true)
 	}
 
-	err := repository.UpdatePlayer(winner)
+	winner.RefreshIsPlaying()
+
+	err = repository.UpdatePlayer(winner)
 	if err != nil {
 		return err
 	}
@@ -537,19 +580,9 @@ func UpdateEndGameState(game *repository.Game, winner *repository.Player, loser 
 		loser.Elo = calculateElo(loserElo, winnerElo, false, true)
 	}
 
+	loser.RefreshIsPlaying()
+
 	err = repository.UpdatePlayer(loser)
-	if err != nil {
-		return err
-	}
-
-	// Update game data
-	if !isDraw {
-		game.WinnerId = sql.NullInt64{Int64: winner.Id, Valid: true}
-	}
-	game.EndedAt = sql.NullTime{Time: time.Now().UTC(), Valid: true}
-	game.InProgress = false
-
-	err = repository.UpdateGame(game)
 	if err != nil {
 		return err
 	}
@@ -615,10 +648,11 @@ func getPlayerAndGame(c *gin.Context) (*repository.Player, *repository.Game, err
 
 func makeGameDTO(g *repository.Game) model.Game {
 	return model.Game{Id: g.Id, Name: g.Name, TurnDurationSeconds: g.TurnDurationSeconds.Int32,
-		Public: !g.PasswordHash.Valid, WhitePlayerId: g.WhitePlayerId.Int64, BlackPlayerId: g.BlackPlayerId.Int64,
-		WinnerId: g.WinnerId.Int64, CreatorId: g.CreatorId.Int64, InProgress: g.InProgress, Tiles: g.Tiles,
-		LastMovePlayedAt: g.FormatLastMovePlayedAt(), StartedAt: g.FormatStartedAt(), EndedAt: g.FormatEndedAt(),
-		CreatedAt: g.FormatCreatedAt()}
+		Public: !g.PasswordHash.Valid, WhitePlayerId: g.WhitePlayerId.Int64,
+		WhitePlayerUsername: g.WhitePlayerUsername.String, BlackPlayerId: g.BlackPlayerId.Int64,
+		BlackPlayerUsername: g.BlackPlayerUsername.String, WinnerId: g.WinnerId.Int64, CreatorId: g.CreatorId.Int64,
+		InProgress: g.InProgress, Tiles: g.Tiles, LastMovePlayedAt: g.FormatLastMovePlayedAt(),
+		StartedAt: g.FormatStartedAt(), EndedAt: g.FormatEndedAt(), CreatedAt: g.FormatCreatedAt()}
 }
 
 func makeGameMoveDTO(gm *repository.GameMove) model.GameMove {

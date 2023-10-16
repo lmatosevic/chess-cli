@@ -38,10 +38,10 @@ func ShowEvent(event *model.Event) {
 
 func ShowGameList(list *model.GameListResponse) {
 	title := fmt.Sprintf("Games | Total: %d | Results: %d", list.TotalCount, list.ResultCount)
-	headers := table.Row{"ID", "Name", "Public", "White Player ID", "Black Player ID", "In progress", "Created at"}
+	headers := table.Row{"ID", "Name", "Public", "White Player Username", "Black Player Username", "In progress", "Created at"}
 	rows := make([]table.Row, 0)
 	for _, g := range list.Items {
-		rows = append(rows, table.Row{g.Id, g.Name, g.Public, g.WhitePlayerId, g.BlackPlayerId, g.InProgress,
+		rows = append(rows, table.Row{g.Id, g.Name, g.Public, g.WhitePlayerUsername, g.BlackPlayerUsername, g.InProgress,
 			utils.ToLocalDate(g.CreatedAt)})
 	}
 
@@ -115,19 +115,19 @@ func ShowGameMoveResult(move string, game *model.Game, moves *model.GameMoveList
 }
 
 func ShowGameMovesHelp() {
-	fmt.Print("The move input should be formatted according to the Public Game Notation chess standard: " +
-		"(figure)(file*)(rank*)(dest_file)(dest_rank)(figure_to_promote*)\n")
+	fmt.Print("The move input should be formatted according to the Public Game Notation chess standard:\n")
+	fmt.Print("(figure)(file*)(rank*)(dest_file)(dest_rank)(figure_to_promote*)\n")
 	fmt.Print("* - marks the optional parts of the move string\n")
-	fmt.Print("Example valid moves: Paa3, Qa3, Nbf3, Bf1c4, Ph7h8Q\n")
-	fmt.Printf("King side castling move is marked as %s and queen side castling as %s string\n",
+	fmt.Print("Example valid moves: Paa3, Qa3, Nbf3, Bf1c4, Ph7h8Q\n\n")
+	fmt.Printf("King side castling move is marked as %s and queen side castling as %s string\n\n",
 		game.KingSideCastligMove, game.QueenSideCastligMove)
 	fmt.Printf("To make a draw request, use the following sign: %s, and to accept the draw request use also the same "+
-		"sign: %s, or to reject it use: %s\n", game.DrawOfferMove, game.DrawOfferMove, game.DrawOfferRejectMove)
+		"sign: %s, or to reject it use: %s\n\n", game.DrawOfferMove, game.DrawOfferMove, game.DrawOfferRejectMove)
 }
 
 func ShowPlayerList(list *model.PlayerListResponse) {
 	title := fmt.Sprintf("Players | Total: %d | Results: %d", list.TotalCount, list.ResultCount)
-	headers := table.Row{"ID", "Username", "Wins", "Losses", "Draws", "Rate", "Elo", "Is playing", "Last Played At"}
+	headers := table.Row{"ID", "Username", "Wins", "Losses", "Draws", "Rate", "Elo", "Is Playing", "Last Played At"}
 	rows := make([]table.Row, 0)
 	for _, p := range list.Items {
 		rows = append(rows, table.Row{p.Id, p.Username, p.Wins, p.Losses, p.Draws, fmt.Sprintf("%.2f%%", p.Rate*100),
