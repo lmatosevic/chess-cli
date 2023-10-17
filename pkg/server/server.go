@@ -19,7 +19,7 @@ import (
 func Run() {
 	conf := *configs.GetConfig()
 
-	version := "1.0.2"
+	version := "1.0.3"
 
 	docs.SwaggerInfo.Title = conf.General.AppName
 	docs.SwaggerInfo.Description = conf.General.Description

@@ -93,7 +93,7 @@ USAGE:
    Chess CLI [global options] command [command options] [arguments...]
 
 VERSION:
-   1.0.2
+   1.0.3
 
 COMMANDS:
    info, i            show server info
