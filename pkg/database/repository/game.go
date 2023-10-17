@@ -195,6 +195,12 @@ func DeleteGame(id int64) error {
 	return err
 }
 
+func UpdateGamePlayerUsername(playerId int64, username string) error {
+	_, err := database.GetConnection().Exec(`UPDATE game SET "whitePlayerUsername" = $1 WHERE "whitePlayerId" = $2`, username, playerId)
+	_, err = database.GetConnection().Exec(`UPDATE game SET "blackPlayerUsername" = $1 WHERE "blackPlayerId" = $2`, username, playerId)
+	return err
+}
+
 func FindInactiveGames() (*[]Game, error) {
 	rows, err := database.GetConnection().Query(`SELECT * FROM game WHERE "turnDurationSeconds" IS NOT NULL
   AND "inProgress" IS TRUE AND (("lastMovePlayedAt" IS NOT NULL AND

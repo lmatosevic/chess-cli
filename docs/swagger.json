@@ -959,6 +959,9 @@
                 "blackPlayerId": {
                     "type": "integer"
                 },
+                "blackPlayerUsername": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -994,6 +997,9 @@
                 },
                 "whitePlayerId": {
                     "type": "integer"
+                },
+                "whitePlayerUsername": {
+                    "type": "string"
                 },
                 "winnerId": {
                     "type": "integer"

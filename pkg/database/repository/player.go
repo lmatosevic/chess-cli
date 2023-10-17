@@ -163,11 +163,11 @@ func CreatePlayer(username string, password string) (*Player, error) {
 }
 
 func UpdatePlayer(player *Player) error {
-	res, err := database.GetConnection().Exec(`UPDATE player SET "passwordHash" = $2, "wins" = $3, "losses" = $4, 
-                  "draws" = $5, "rate" = $6, "elo" = $7, "lastPlayedAt" = $8, "isPlaying" = $9, "updatedAt" = $10 
-              WHERE id = $1`,
-		player.Id, player.PasswordHash, player.Wins, player.Losses, player.Draws, player.Rate, player.Elo,
-		SqlDateFormat(player.LastPlayedAt), player.IsPlaying, utils.ISODateNow())
+	res, err := database.GetConnection().Exec(`UPDATE player SET "username" = $2, "passwordHash" = $3, "wins" = $4, 
+                  "losses" = $5, "draws" = $6, "rate" = $7, "elo" = $8, "lastPlayedAt" = $9, "isPlaying" = $10, 
+                  "updatedAt" = $11 WHERE id = $1`,
+		player.Id, player.Username, player.PasswordHash, player.Wins, player.Losses, player.Draws, player.Rate,
+		player.Elo, SqlDateFormat(player.LastPlayedAt), player.IsPlaying, utils.ISODateNow())
 	affected, _ := res.RowsAffected()
 	if affected == 0 {
 		return errors.New("player does not exist")

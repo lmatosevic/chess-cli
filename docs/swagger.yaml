@@ -33,6 +33,8 @@ definitions:
     properties:
       blackPlayerId:
         type: integer
+      blackPlayerUsername:
+        type: string
       createdAt:
         type: string
       creatorId:
@@ -57,6 +59,8 @@ definitions:
         type: integer
       whitePlayerId:
         type: integer
+      whitePlayerUsername:
+        type: string
       winnerId:
         type: integer
     type: object

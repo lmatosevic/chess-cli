@@ -173,6 +173,14 @@ func UpdatePlayer(c *gin.Context) {
 		return
 	}
 
+	if username != "" {
+		err = repository.UpdateGamePlayerUsername(player.Id, username)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, model.ErrorResponse{Success: false, Error: err.Error()})
+			return
+		}
+	}
+
 	c.JSON(http.StatusOK, model.GenericResponse{Success: true})
 }
 

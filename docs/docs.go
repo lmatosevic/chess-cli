@@ -970,6 +970,9 @@ const docTemplate = `{
                 "blackPlayerId": {
                     "type": "integer"
                 },
+                "blackPlayerUsername": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -1005,6 +1008,9 @@ const docTemplate = `{
                 },
                 "whitePlayerId": {
                     "type": "integer"
+                },
+                "whitePlayerUsername": {
+                    "type": "string"
                 },
                 "winnerId": {
                     "type": "integer"
