@@ -93,7 +93,7 @@ USAGE:
    Chess CLI [global options] command [command options] [arguments...]
 
 VERSION:
-   1.0.3
+   1.0.4
 
 COMMANDS:
    info, i            show server info
@@ -159,6 +159,20 @@ COMMANDS:
 OPTIONS:
    --help, -h  show help
 ```
+
+## Examples
+
+### Game in progress
+
+![chess game](https://github.com/lmatosevic/chess-cli/blob/main/resources/chess-cli-game.png?raw=true)
+
+### Games list
+
+![games list](https://github.com/lmatosevic/chess-cli/blob/main/resources/chess-cli-games.png?raw=true)
+
+### Players list
+
+![players list](https://github.com/lmatosevic/chess-cli/blob/main/resources/chess-cli-players.png?raw=true)
 
 ## License
 

@@ -20,7 +20,7 @@ func Run() {
 	app := &cli.App{
 		Name:    "Chess CLI",
 		Usage:   "Play a game of chess using command line interface",
-		Version: "1.0.3",
+		Version: "1.0.4",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:        "server",
