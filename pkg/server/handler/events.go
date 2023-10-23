@@ -22,7 +22,7 @@ const (
 	GameStartEvent           = "GameStartEvent"
 	GameEndEvent             = "GameEndEvent"
 	GameWhitePlayerMoveEvent = "GameWhitePlayerMoveEvent"
-	GameBlackPlayerMoveEvent = "GameWhitePlayerMoveEvent"
+	GameBlackPlayerMoveEvent = "GameBlackPlayerMoveEvent"
 	PlayerMessage            = "PlayerMessage"
 )
 
@@ -114,9 +114,8 @@ func SubscribeToEvent(c *gin.Context) {
 		case <-c.Request.Context().Done():
 			delete(eventChannels, requestId)
 			return true
-
 		case event := <-eventChannels[requestId]:
-			if shouldReceiveEvent(event, eventType, gid, player, game) {
+			if shouldReceiveEvent(event, eventType, game, player) {
 				c.SSEvent("message", event)
 			}
 			return true
@@ -129,14 +128,12 @@ func IsValidEventType(eventType string) bool {
 		GameEndEvent, GameWhitePlayerMoveEvent, GameBlackPlayerMoveEvent, PlayerMessage}, eventType)
 }
 
-func shouldReceiveEvent(event model.Event, eventType string, gameId int64, player *repository.Player,
-	game *repository.Game) bool {
-
+func shouldReceiveEvent(event model.Event, eventType string, game *repository.Game, player *repository.Player) bool {
 	if event.Type != eventType && (eventType != GameAnyEvent || !strings.HasPrefix(event.Type, "Game")) {
 		return false
 	}
 
-	if gameId > 0 && gameId != game.Id {
+	if game != nil && game.Id != event.Data.GameId {
 		return false
 	}
 

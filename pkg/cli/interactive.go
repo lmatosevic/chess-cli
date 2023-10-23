@@ -326,13 +326,12 @@ func playGame(gameId int64, player *model.Player) {
 
 	var opponent *model.Player
 
-	var cancelListener func()
+	var cancelListener *func()
 
-	go func(cancel *func()) {
+	go func() {
 		wait, c, err := command.ListenEvents([]string{handler.GameAnyEvent}, gameId,
 			func(event *model.Event, end func()) {
 				if event.Type == handler.GameEndEvent {
-					end()
 					turnChan <- true
 				}
 				if event.Type == handler.GameMoveEvent && event.Data.PlayerId != player.Id {
@@ -361,9 +360,9 @@ func playGame(gameId int64, player *model.Player) {
 			fmt.Println(err)
 			return
 		}
-		cancel = &c
+		cancelListener = &c
 		wait()
-	}(&cancelListener)
+	}()
 
 out:
 	for {
@@ -458,7 +457,7 @@ out:
 						break out
 					}
 
-					_, err = command.PlayGame(gameId, move)
+					_, err = command.PlayGameMove(gameId, move)
 					if err != nil {
 						fmt.Println(err)
 					} else {
@@ -502,7 +501,6 @@ out:
 						fmt.Println("Invalid option")
 					}
 				}
-				continue
 			}
 		}
 	}
@@ -510,7 +508,7 @@ out:
 	signal.Reset(os.Interrupt, syscall.SIGTERM)
 
 	if cancelListener != nil {
-		cancelListener()
+		(*cancelListener)()
 	}
 }
 

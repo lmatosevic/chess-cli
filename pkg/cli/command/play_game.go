@@ -7,7 +7,7 @@ import (
 	"github.com/lmatosevic/chess-cli/pkg/model"
 )
 
-func PlayGame(gameId int64, move string) (*model.GenericResponse, error) {
+func PlayGameMove(gameId int64, move string) (*model.GenericResponse, error) {
 	resp, err := client.SendRequest[model.GenericResponse]("POST", fmt.Sprintf("/v1/games/%d/move", gameId), nil,
 		&model.GameMakeMove{Move: move})
 	if err != nil {

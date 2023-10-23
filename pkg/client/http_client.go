@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"github.com/lmatosevic/chess-cli/pkg/model"
@@ -116,11 +117,12 @@ func SendRequest[T any](method string, path string, params *map[string]string, b
 	return &HttpResponse[T]{StatusCode: resp.StatusCode, Data: respModel, Error: errorModel}, err
 }
 
-func SubscribeOnEvent(eventType string, gameId int64, end func(), onEvent func(event *model.Event, end func())) error {
+func SubscribeOnEvent(eventType string, gameId int64, ctx context.Context, end func(),
+	onEvent func(event *model.Event, end func())) error {
 	client := sse.NewClient(fmt.Sprintf("%s/v1/events/subscribe?token=%s&event=%s&gameId=%d",
 		httpClient.BaseUrl, httpClient.AccessToken, eventType, gameId))
 
-	err := client.Subscribe("message", func(msg *sse.Event) {
+	err := client.SubscribeWithContext(ctx, "message", func(msg *sse.Event) {
 		event, err := utils.ParseJson[model.Event](bytes.NewReader(msg.Data))
 		if err != nil {
 			return

@@ -329,7 +329,7 @@ func Run() {
 								return err
 							}
 
-							resp, err := command.PlayGame(cCtx.Int64("gameId"), cCtx.String("move"))
+							resp, err := command.PlayGameMove(cCtx.Int64("gameId"), cCtx.String("move"))
 							if err != nil {
 								return err
 							}
