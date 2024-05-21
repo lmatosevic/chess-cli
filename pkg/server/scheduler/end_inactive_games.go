@@ -11,6 +11,7 @@ func EndInactiveGames() {
 	inactiveGames, err := repository.FindInactiveGames()
 	if err != nil {
 		log.Printf("Error while querying inactive games: %s", err.Error())
+		return
 	}
 
 	for _, game := range *inactiveGames {
