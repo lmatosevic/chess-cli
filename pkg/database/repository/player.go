@@ -168,20 +168,30 @@ func UpdatePlayer(player *Player) error {
                   "updatedAt" = $11 WHERE id = $1`,
 		player.Id, player.Username, player.PasswordHash, player.Wins, player.Losses, player.Draws, player.Rate,
 		player.Elo, SqlDateFormat(player.LastPlayedAt), player.IsPlaying, utils.ISODateNow())
+	if err != nil {
+		return err
+	}
+
 	affected, _ := res.RowsAffected()
 	if affected == 0 {
 		return errors.New("player does not exist")
 	}
-	return err
+
+	return nil
 }
 
 func DeletePlayer(id int64) error {
 	res, err := database.GetConnection().Exec(`DELETE FROM player WHERE id = $1`, id)
+	if err != nil {
+		return err
+	}
+
 	affected, _ := res.RowsAffected()
 	if affected == 0 {
 		return errors.New("player does not exist")
 	}
-	return err
+
+	return nil
 }
 
 func scanPlayerRows(rows *sql.Rows, p *Player) error {

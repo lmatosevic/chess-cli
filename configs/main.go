@@ -99,11 +99,12 @@ func OverrideWithEnvVariables(obj any, path string) {
 	// from environment variables if they are set (e.g. Database.Password -> DATABASE_PASSWORD)
 	for i := 0; i < values.NumField(); i++ {
 		fieldName := typ.Field(i).Name
+		envVarName := fmt.Sprintf("%s%s%s", path, pathSep, fieldName)
 		if typ.Field(i).Type.Kind() == reflect.Struct {
 			inf := values.Field(i).Addr()
-			OverrideWithEnvVariables(inf, fmt.Sprintf("%s%s%s", path, pathSep, fieldName))
+			OverrideWithEnvVariables(inf, envVarName)
 		} else {
-			env, ok := os.LookupEnv(strings.ToUpper(fmt.Sprintf("%s%s%s", path, pathSep, fieldName)))
+			env, ok := os.LookupEnv(strings.ToUpper(envVarName))
 			if ok {
 				f := values.Field(i)
 				if f.IsValid() && f.CanSet() {
@@ -134,6 +135,8 @@ func OverrideWithEnvVariables(obj any, path string) {
 						if e == nil {
 							f.SetInt(int64(val))
 						}
+					default:
+						log.Printf("Unsupported env variable type: %s -> %s\n", strings.ToUpper(envVarName), f.Kind())
 					}
 				}
 			}

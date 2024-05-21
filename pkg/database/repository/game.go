@@ -179,11 +179,16 @@ func UpdateGame(game *Game) error {
 		game.Id, game.Name, game.PasswordHash, game.TurnDurationSeconds, game.WhitePlayerId, game.WhitePlayerUsername,
 		game.BlackPlayerId, game.BlackPlayerUsername, game.CreatorId, game.WinnerId, game.Tiles, game.InProgress,
 		SqlDateFormat(game.LastMovePlayedAt), SqlDateFormat(game.StartedAt), SqlDateFormat(game.EndedAt), utils.ISODateNow())
+	if err != nil {
+		return err
+	}
+
 	affected, _ := res.RowsAffected()
 	if affected == 0 {
 		return errors.New("game does not exist")
 	}
-	return err
+
+	return nil
 }
 
 func DeleteGame(id int64) error {

@@ -57,11 +57,16 @@ func FindAccessToken(token string) (*AccessToken, error) {
 
 func RevokeAccessToken(token string) error {
 	res, err := database.GetConnection().Exec(`DELETE FROM access_token WHERE token = $1`, token)
+	if err != nil {
+		return err
+	}
+
 	affected, _ := res.RowsAffected()
 	if affected == 0 {
 		return errors.New("access token does not exist")
 	}
-	return err
+
+	return nil
 }
 
 func scanAccessTokenRows(rows *sql.Rows, at *AccessToken) error {
